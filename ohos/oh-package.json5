@@ -1,0 +1,9 @@
+{
+  "name": "package_info_plus_ohos",
+  "version": "1.0.0",
+  "description": "HarmonyOS NEXT implementation of Flutter's package_info_plus plugin.",
+  "main": "index.ets",
+  "author": "ramonouyang",
+  "license": "Apache-2.0",
+  "dependencies": {}
+}

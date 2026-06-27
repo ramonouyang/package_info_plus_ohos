@@ -1,0 +1,34 @@
+name: package_info_plus_ohos
+description: HarmonyOS NEXT implementation of Flutter's package_info_plus plugin. Query app package information (version, name, package name, etc.).
+version: 0.1.0
+homepage: https://github.com/ramonouyang/package_info_plus_ohos
+repository: https://github.com/ramonouyang/package_info_plus_ohos
+issue_tracker: https://github.com/ramonouyang/package_info_plus_ohos/issues
+topics:
+  - package-info
+  - harmonyos
+  - ohos
+  - app-version
+
+environment:
+  sdk: '>=3.4.4 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  package_info_plus_platform_interface: ^2.0.0
+  plugin_platform_interface: ^2.1.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  plugin:
+    implements: package_info_plus
+    platforms:
+      ohos:
+        dartPluginClass: PackageInfoPlusOhos
+        pluginClass: PackageInfoPlusOhosPlugin
