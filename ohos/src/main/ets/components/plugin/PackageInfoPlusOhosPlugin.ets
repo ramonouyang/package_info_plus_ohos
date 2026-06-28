@@ -61,16 +61,15 @@ export default class PackageInfoPlusOhosPlugin
         );
       const appInfo = bundleInfo.appInfo;
 
-      const packageInfo: Record<string, Object | null> = {
-        appName: appInfo?.label ?? '',
-        packageName: bundleInfo.name ?? '',
-        version: bundleInfo.versionName ?? '',
-        buildNumber: bundleInfo.versionCode?.toString() ?? '0',
-        buildSignature: '',
-        installerStore: null,
-        installTime: bundleInfo.installTime ?? null,
-        updateTime: bundleInfo.updateTime ?? null,
-      };
+      const packageInfo = new Map<string, Object | null>();
+      packageInfo.set('appName', appInfo?.label ?? '');
+      packageInfo.set('packageName', bundleInfo.name ?? '');
+      packageInfo.set('version', bundleInfo.versionName ?? '');
+      packageInfo.set('buildNumber', bundleInfo.versionCode?.toString() ?? '0');
+      packageInfo.set('buildSignature', '');
+      packageInfo.set('installerStore', null);
+      packageInfo.set('installTime', bundleInfo.installTime ?? null);
+      packageInfo.set('updateTime', bundleInfo.updateTime ?? null);
 
       result.success(packageInfo);
     } catch (error) {
