@@ -1,37 +1,36 @@
-import { bundleManager } from '@kit.AbilityKit';
-import { FlutterPlugin, FlutterMethodCall, FlutterMethodResult } from '@ohos/flutter';
+import {
+  FlutterPlugin,
+  FlutterPluginBinding,
+  MethodCall,
+  MethodCallHandler,
+  MethodChannel,
+  MethodResult,
+} from '@ohos/flutter_ohos';
+import bundleManager from '@ohos.bundle.bundleManager';
+
+const TAG = 'PackageInfoPlusOhos';
+const CHANNEL_NAME = 'dev.fluttercommunity.plus/package_info';
 
 /**
  * HarmonyOS NEXT implementation of package_info_plus plugin.
  * 
  * Provides app package information using @ohos.bundle.bundleManager API.
- * 
- * Supported fields:
- * - appName: Application display name
- * - packageName: Application bundle name
- * - version: Version name (e.g., "1.0.1")
- * - buildNumber: Version code as string (e.g., "2")
- * - buildSignature: Empty string (not supported)
- * - installerStore: null (not supported)
- * - installTime: null (not supported)
- * - updateTime: null (not supported)
  */
-export default class PackageInfoPlusOhosPlugin implements FlutterPlugin {
-  private static readonly CHANNEL_NAME = 'dev.fluttercommunity.plus/package_info';
+export default class PackageInfoPlusOhosPlugin
+  implements FlutterPlugin, MethodCallHandler {
+  private channel: MethodChannel | null = null;
 
-  /**
-   * Registers the plugin with the Flutter engine.
-   */
-  static registerWith(registry: any): void {
-    const channel = registry.messenger(PackageInfoPlusOhosPlugin.CHANNEL_NAME);
+  static registerWith(registrar: FlutterPluginBinding): void {
     const instance = new PackageInfoPlusOhosPlugin();
-    channel.setMethodCallHandler(instance.handleMethodCall.bind(instance));
+    const channel = new MethodChannel(
+      CHANNEL_NAME,
+      registrar.getMessenger()
+    );
+    channel.setMethodCallHandler(instance);
+    instance.channel = channel;
   }
 
-  /**
-   * Handles method calls from the Dart side.
-   */
-  private handleMethodCall(call: FlutterMethodCall, result: FlutterMethodResult): void {
+  onMethodCall(call: MethodCall, result: MethodResult): void {
     switch (call.method) {
       case 'getAll':
         this.handleGetAll(result);
@@ -44,10 +43,8 @@ export default class PackageInfoPlusOhosPlugin implements FlutterPlugin {
 
   /**
    * Retrieves all package information.
-   * 
-   * Uses bundleManager.getBundleInfoForSelfSync() to get current app info.
    */
-  private handleGetAll(result: FlutterMethodResult): void {
+  private handleGetAll(result: MethodResult): void {
     try {
       const bundleInfo = bundleManager.getBundleInfoForSelfSync();
       const appInfo = bundleInfo.appInfo;
@@ -57,15 +54,19 @@ export default class PackageInfoPlusOhosPlugin implements FlutterPlugin {
         packageName: bundleInfo.bundleName ?? '',
         version: bundleInfo.versionName ?? '',
         buildNumber: bundleInfo.versionCode?.toString() ?? '0',
-        buildSignature: '', // Not supported on HarmonyOS NEXT
-        installerStore: null, // Not supported
-        installTime: null, // Not supported
-        updateTime: null, // Not supported
+        buildSignature: '',
+        installerStore: null,
+        installTime: null,
+        updateTime: null,
       };
 
       result.success(packageInfo);
     } catch (error) {
-      result.error('PACKAGE_INFO_ERROR', 'Failed to get package info', error?.toString() ?? 'Unknown error');
+      result.error(
+        'PACKAGE_INFO_ERROR',
+        'Failed to get package info',
+        error?.toString() ?? 'Unknown error'
+      );
     }
   }
 }
